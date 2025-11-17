@@ -2,7 +2,7 @@
 	$servername = "ggcdomains";
 	$username = "rlawrenc_guest";
 	$password = "ggcITEC4450@";
-	$dbname = "rlawrenc_SportsOrdersdb";
+	$dbname = "rlawrenc_sportsdb";
 					
 	$conn = new mysqli($servername, $username, $password, $dbname);
 
