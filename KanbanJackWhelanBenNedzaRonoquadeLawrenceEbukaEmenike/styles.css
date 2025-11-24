@@ -1,0 +1,9 @@
+.w3-pacifico { font-family: "Pacifico", serif; }
+h1, h2 { font-family: "Pacifico", serif; }
+
+/** Form css styles */
+/* Add form styles here or remove if not needed */
+input[type=text] {
+  margin: 10px 0;
+  box-sizing: border-box;
+}

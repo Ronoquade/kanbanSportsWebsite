@@ -1,5 +1,13 @@
 <?php
 $document_root = $_SERVER['DOCUMENT_ROOT'];
+# initialize the session
+session_start();
+
+# check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

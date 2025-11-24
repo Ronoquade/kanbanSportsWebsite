@@ -1,3 +1,13 @@
+<?php
+# initialize the session
+session_start();
+
+# check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: index.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +16,7 @@
     <title>New Order</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico">
+    <link rel="stylesheet" href="styles.css">
     <style>
         .w3-pacifico { font-family: "Pacifico", serif; }
         h1 { font-family: "Pacifico", serif; }
@@ -15,8 +26,7 @@
     <header class="w3-container w3-center w3-blue-gray">
         <h1>Sports Apparel</h1>
         <h2>View Results</h2>
-        <img src="SportsApparel.png" width="20%" height="22%"
-        class="w3-display-topright">
+        <img src="SportsApparel.png" width="20%" height="22%" class="w3-display-topright">
     </header>
 
     <?php include "mainMenu.php"; ?>
