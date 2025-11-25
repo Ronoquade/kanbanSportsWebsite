@@ -92,8 +92,7 @@
     <div class="w3-container w3-blue-grey">
         <?php
         if(isset($_POST['submit'])) {
-            if(!isset($_POST['customer']) || !isset($_POST['brand']) || 
-            !isset($_POST['price'])) {
+            if(!isset($_POST['customer']) || !isset($_POST['price'])) {
                 echo "<p>You have not entered all the required details.<br />
                         Please go back and try again.</p>";
                 exit;
@@ -104,31 +103,27 @@
             // create short variable names
             $customer_id = mysqli_real_escape_string($conn, $_POST['customer']);
             $price = mysqli_real_escape_string($conn, $_POST['price']);
-            $brand = mysqli_real_escape_string($conn, $_POST['brand']);
+            $brandString = mysqli_real_escape_string($conn, $_POST['sportsWearSel']);
             $date = date("Y-m-d");
 
-            $sql = "INSERT INTO orders (customer_id, productBrand, totalPrice, date) VALUES 
-            ('$customer_id', '$brand', '$price', '$date')";
+            $sql = "INSERT INTO orders (customer_id, totalPrice, date) VALUES 
+            ('$customer_id', '$price', '$date')";
 
             if($conn->query($sql) === TRUE) {
                     $order_id = $conn->insert_id;
                     echo "<b>Order created successfully!</b><br>";
                     echo "Order Id: $order_id<br>";
-                    echo "Created on: $orderDate<br>";
                     echo "Customer Id: $customer_id<br>";
-                    echo "Product Brand: $brand<br>";
-                    echo "Total Price: $price<br>";
+                    echo "Total Price: $" . number_format($price,2) . "<br>";
                     echo "<hr>";
 
-                    $productIdArray = explode(";", $brand);
-                    for($i=0; $i < count($productIdArray); $i++) {
-                        $curProductId = $productIdArray[$i];
-
+                    $productIdArray = explode(";", $brandString);
+                    foreach($productIdArray as $curProductId) {
                         if(empty($curProductId))
                             continue;
 
-                        $sql = "INSERT INTO orders (order_id, customer_id) VALUES
-                        ('$order_id', '$curCustomerId')";
+                        $sql = "INSERT INTO orders (order_id, product_id) VALUES
+                        ('$order_id', '$curProductId')";
 
                         if($conn->query($sql) === TRUE)
                             echo "Product Id: $curProductId added successfully!<br>";
@@ -143,70 +138,71 @@
         ?>
     </div>
     <script>
-        function addProduct() {
-            var brandSel = document.getElementById('brandSel');
-            var brandAv = document.getElementById('brandAv');
-            var productSel = document.getElementById('productSel');
+        function addSportsWear() {
+            var listSel = document.getElementById('listSportsWear');
+            var listAv = document.getElementById('listSportsWearAv');
+            var hidden = document.getElementById('sportsWearSel');
 
-            if(brandAv.options.length < 1) 
+            if(listAv.options.length < 1) 
                 return;
 
-            var brandAvIndex = brandAv.selectedIndex;
-            var brandAvInner = brandAv[brandAvIndex].innerHTML;
-            var brandAvVal = brandAv[brandAvIndex].value;
+            var listIndex = listAv.selectedIndex;
+            var listText = listAv.options[listIndex].text;
+            var listVal = listAv.options[listIndex].value;
 
-            brandSel.options[brandSel.options.length] = new Option(
-            brandAvInner, brandAvVal);
+            listSel.options[listSel.options.length] = new Option(
+            listText, listVal);
+            listAv.remove(listIndex);
 
-            brandAv[brandAvIndex] = null;
-
-            sortSelect(brandSel);
-            result="";
-            for(i=0; i < brandSel.options.length; i++)
-                result += brandSel.options[i].value + ";";
-
-            brandSel.value = result;
+            updateHiddenField();
             calcTotalPrice();
         }
 
-        function removeProduct() {
-            var brandSel = document.getElementById('brandSel');
-            var brandAv = document.getElementById('brandAv');
-            var productSel = document.getElementById('productSel');
+        function removeSportsWear() {
+            var listSel = document.getElementById('listSportsWear');
+            var brandAv = document.getElementById('listSportsWearAv');
+            var hidden = document.getElementById('sportsWearSel');
 
-            if(brandSel.options.length < 1) 
+            if(listSel.options.length < 1) 
                 return;
 
-            var brandSelIndex = brandSel.selectedIndex;
-            var brandSelInner = brandSel[brandSelIndex].innerHTML;
-            var brandSelVal = brandSel[brandSelIndex].value;
+            var listIndex = listSel.selectedIndex;
+            var listText = listSel.options[listIndex].text;
+            var listVal = listSel.options[listIndex].value;
 
-            brandAv.options[brandAv.options.length] = new Option(
-            brandSelInner, brandSelVal);
+            listAv.options[listAv.options.length] = new Option(
+            listText, listVal);
+            listSel.remove(listIndex);
 
-            brandSel[brandSelIndex] = null;
-
-            sortSelect(brandAv);
-            result="";
-            for(i=0; i < brandSel.options.length; i++)
-                result += brandSel.options[i].value + ";";
-
-            productSel.value = result;
+            updateHiddenField();
             calcTotalPrice();
+        }
+
+        function updateHiddenField() {
+            let listSel = document.getElementById('listSportsWear');
+            let hidden = document.getElementById('sportsWearSel');
+
+            let ids = [];
+
+            for(let i=0; i < listSel.options.length; i++) {
+                ids.push(listSel.options[i].value);
+            }
+
+            hidden.value = ids.join(';');
         }
 
         function calcTotalPrice() {
-            var brandSel = document.getElementById('brandSel');
+            var listSel = document.getElementById('listSportsWear');
             var priceOut = document.getElementById('price');
-            var totalPrice = 0;
+            let totalPrice = 0;
 
-            for(i=0; i < brandSel.options.length; i++) {
-                curPrice = brandSel.options[i].innerHTML.split(',')[1];
-                curPrice = parseFloat(curPrice);
-                totalPrice += curPrice;
+            for(let i=0; i < listSel.options.length; i++) {
+                let parts = listSel.options[i].text.split(',');
+                let price = parseFloat(parts[2]);
+                totalPrice += price;
             }
 
-            priceOut.value = formatAmt(totalPrice);
+            priceOut.value = totalPrice.toFixed(2);
         }
     </script>
 </body>
