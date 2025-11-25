@@ -1,13 +1,3 @@
-<?php
-# initialize the session
-session_start();
-
-# check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: newOrder.php");
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,52 +7,76 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico">
     <style>
-        .w3-pacifico { font-family: "Pacifico", serif; }
         h1 { font-family: "Pacifico", serif; }
     </style>
 </head>
 <body class="w3-theme">
     <header class="w3-container w3-center w3-blue-gray">
         <h1>Sports Apparel</h1>
-        <h2>Delete Results</h2>
+        <h2>Delete Order</h2>
         <img src="SportsApparel.png" width="20%" height="22%"
         class="w3-display-topright">
     </header>
 
     <?php include "mainMenu.php"; ?>
     
-    <form action="newOrder.php" class="w3-container w3-blue-grey" method="POST">
+    <form action="deleteOrder.php" class="w3-container w3-blue-grey" method="POST">
         <fieldset>
-            <label>Customer</label>
-        </fieldset>
-    </form>
-    <div class="w3-container w3-light-grey">
-        <?php
-        $orders = file("orders.txt");
-        $number_of_orders = count($orders);
-        if($number_of_orders == 0) {
-            echo "<p><strong>No orders pending!<br>
-                 Please try again later.</strong></p>";
-        } else {
-            echo "<table class='w3-table w3-striped w3-border'>";
-            echo "  <tr class='w3-blue-gray'>";
-            echo "      <th>Datetime</th>";
-            echo "      <th>Product</th>";
-            echo "      <th>Quantity</th>";
-            echo "      <th>Total</th>";
-            echo "  </tr>";
+            <label>Order</label>
+            <select name="order_id" class="w3-select" required>
+                <option value="" disabled selected>Choose Order</option>
+                <?php
 
-            for($i = 0; $i < $number_of_orders; $i++) {
-                $curOrder = explode(';', $orders[$i]);
-                echo "<tr>";
-                for($j = 0; $j < count($curOrder); $j++) {
-                    echo "<td>".$curOrder[$j]."</td>";
+                include "connectDatabase.php";
+
+                $sql  = "SELECT o.order_id, o.totalPrice, o.date, 
+                c.firstName, c.lastName ";
+                $sql .= "FROM orders o ";
+                $sql .= "JOIN customer c ON c.customer_id = o.customer_id ";
+                $sql .= "ORDER BY o.order_id ";
+
+                $result = $conn->query($sql);
+
+                while($row = $result->fetch_assoc()) {
+                    $orderId = $row['order_id'];
+                    $customerFirstName = $row['firstName'];
+                    $customerLastName = $row['lastName'];
+
+                    echo "<option value='$orderId'>
+                    Order $orderId - $customerLastName, 
+                    $customerFirstName - $$price - $date
+                    </option>";
                 }
-                echo "</tr>";
+
+                $conn->close();
+                ?>
+            </select><br><br>
+        </fieldset>
+        <br>
+        <input type="submit" name="delete" class="w3-btn w3-blue-grey"
+        value="Delete Order">
+    </form>
+
+    <div class="w3-container w3-blue-grey">
+        <?php
+        if(isset($_POST['delete'])) {
+            
+            $order_id = $_POST['order_id'];
+
+            include "connectDatabase.php";
+
+            $sql = "DELETE FROM orders WHERE order_id = '$order_id'";
+            
+            if($conn->query($sql) === TRUE) {
+                echo "<b>Order $order_id deleted successfully!</b>";
+            } else {
+                echo "Error: " . $conn->error;
             }
-            echo "</table>";
-        }
+
+            $conn->close();
+        }   
         ?>
     </div>
+
 </body>
 </html>
