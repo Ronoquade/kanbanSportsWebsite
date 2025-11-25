@@ -33,8 +33,9 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
 
             $sql  = "SELECT o.order_id, c.customer_id, c.firstName, c.lastName,
             o.date, p.name, o.totalPrice ";
-            $sql .= "FROM customer c, orders o, product p ";
-            $sql .= "WHERE c.customer_id = o.customer_id";
+            $sql .= "FROM orders o ";
+            $sql .= "JOIN customer c ON c.customer_id = o.customer_id ";
+            $sql .= "JOIN product p ON p.product_id = o.product_id ";
             $sql .= "ORDER BY o.order_id ";
 
             $result = $conn->query($sql);
@@ -70,4 +71,5 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
     </div>
 </body>
 </html>
+
 
