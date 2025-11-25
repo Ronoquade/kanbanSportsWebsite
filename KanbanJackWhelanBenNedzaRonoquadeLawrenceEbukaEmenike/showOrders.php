@@ -1,13 +1,5 @@
 <?php
 $document_root = $_SERVER['DOCUMENT_ROOT'];
-# initialize the session
-session_start();
-
-# check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
-    exit;
-}
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +7,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Orders</title>
+    <title>Show Orders</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico">
@@ -24,43 +16,58 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         h1 { font-family: "Pacifico", serif; }
     </style>
 </head>
-<body class="w3-theme">
-    <header class="w3-container w3-center w3-blue-gray">
-        <h1>Sports Apparel</h1>
-        <h2>View Results</h2>
-        <img src="SportsApparel.png" width="20%" height="22%"
-        class="w3-display-topright">
-    </header>
+<body>
+    <div class="w3-container w3-blue-grey"></div>
+        <header class="w3-display-container w3-center">
+            <h1>Sports Apparel</h1>
+            <h2>Show Results</h2>
+            <img src="SportsApparel.png" width="20%" height="22%"
+            class="w3-display-topright">
+        </header>
 
-    <?php include "mainMenu.php"; ?>
+        <?php include "mainMenu.php"; ?>
     
-    <div class="w3-container w3-light-grey">
-        <?php
-        $orders = file("orders.txt");
-        $number_of_orders = count($orders);
-        if($number_of_orders == 0) {
-            echo "<p><strong>No orders pending!<br>
-                 Please try again later.</strong></p>";
-        } else {
-            echo "<table class='w3-table w3-striped w3-border'>";
-            echo "  <tr class='w3-blue-gray'>";
-            echo "      <th>Datetime</th>";
-            echo "      <th>Product</th>";
-            echo "      <th>Quantity</th>";
-            echo "      <th>Total</th>";
-            echo "  </tr>";
+        <div class="w3-container w3-blue-grey">
+            <?php
+            include "connectDatabase.php";
 
-            for($i = 0; $i < $number_of_orders; $i++) {
-                $curOrder = explode(';', $orders[$i]);
-                echo "<tr>";
-                for($j = 0; $j < count($curOrder); $j++) {
-                    echo "<td>".$curOrder[$j]."</td>";
+            $sql  = "SELECT o.order_id, c.customer_id, c.firstName, c.lastName,
+            o.date, p.name, o.totalPrice ";
+            $sql .= "FROM customer c, orders o, product p ";
+            $sql .= "WHERE c.customer_id = o.customer_id";
+            $sql .= "ORDER BY o.order_id ";
+
+            $result = $conn->query($sql);
+
+            if($result->num_rows > 0) {
+                echo "<table class='w3-table w3-striped'>";
+                echo "  <tr class='w3-teal'>";
+                echo "      <th>ID</th>";
+                echo "      <th>First Name</th>";
+                echo "      <th>Last Name</th>";
+                echo "      <th>Date</th>";
+                echo "      <th>Product Name</th>";
+                echo "      <th>Total Price</th>";
+                echo "  </tr>";
+
+                while($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "  <td>".$row['order_id']."</td>";
+                    echo "  <td>".$row['firstName']."</td>";
+                    echo "  <td>".$row['lastName']."</td>";
+                    echo "  <td>".$row['date']."</td>";
+                    echo "  <td>".$row['name']."</td>";
+                    echo "  <td>".$row['totalPrice']."</td>";
+                    echo "</tr>";
                 }
-                echo "</tr>";
+                echo "</table>";
+            } else {
+                echo "0 results<br>";
             }
-            echo "</table>";
-        }
+            $conn->close();
         ?>
+        </div>
     </div>
 </body>
 </html>
+
