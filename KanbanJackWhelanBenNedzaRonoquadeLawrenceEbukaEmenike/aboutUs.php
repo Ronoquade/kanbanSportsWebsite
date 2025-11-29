@@ -1,3 +1,13 @@
+<?php
+    session_start();
+    include "utilFunctions.php";
+
+    # check if the user is already logged in, if yes then redirect to login page
+    if(!isset($_SESSION["loggedin"]) && ($_SESSION["loggedin"]) !== true){
+        header("location: index.php");
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

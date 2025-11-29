@@ -1,7 +1,14 @@
 <?php
 $document_root = $_SERVER['DOCUMENT_ROOT'];
-?>
+# initialize the session
+session_start();
 
+# check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: index.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,21 +34,18 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
 
         <?php include "mainMenu.php"; ?>
     
-        <div class="w3-container w3-blue-grey">
+        <div class="w3-container w3-grey">
             <?php
             include "connectDatabase.php";
-
-            $sql  = "SELECT o.order_id, c.customer_id, c.firstName, c.lastName,
-            o.date, p.name, o.totalPrice ";
-            $sql .= "FROM orders o ";
-            $sql .= "JOIN customer c ON c.customer_id = o.customer_id ";
-            $sql .= "JOIN product p ON p.product_id = o.product_id ";
-            $sql .= "ORDER BY o.order_id ";
+            // Query to fetch order details along with customer and product information
+            $sql  = "SELECT c.customer_id AS ID, c.firstName AS 'First Name', c.lastName AS 'Last Name', o.date AS Date,
+             d.name AS product, o.totalPrice AS 'Total Price' FROM customer c JOIN orders o ON c.customer_id = o.customer_id
+              JOIN productorder do ON o.order_id = do.order_id JOIN product d ON do.product_id = d.product_id ORDER BY o.date DESC ";
 
             $result = $conn->query($sql);
 
             if($result->num_rows > 0) {
-                echo "<table class='w3-table w3-striped'>";
+                echo "<table class='w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white'>";
                 echo "  <tr class='w3-teal'>";
                 echo "      <th>ID</th>";
                 echo "      <th>First Name</th>";
@@ -53,12 +57,12 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
 
                 while($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "  <td>".$row['order_id']."</td>";
-                    echo "  <td>".$row['firstName']."</td>";
-                    echo "  <td>".$row['lastName']."</td>";
-                    echo "  <td>".$row['date']."</td>";
-                    echo "  <td>".$row['name']."</td>";
-                    echo "  <td>".$row['totalPrice']."</td>";
+                    echo "  <td>" . $row['ID'] . "</td>";
+                    echo "  <td>" . $row['First Name'] . "</td>";
+                    echo "  <td>" . $row['Last Name'] . "</td>";
+                    echo "  <td>" . $row['Date'] . "</td>";
+                    echo "  <td>" . $row['product'] . "</td>";
+                    echo "  <td>$" . number_format($row['Total Price'], 2) . "</td>";
                     echo "</tr>";
                 }
                 echo "</table>";
