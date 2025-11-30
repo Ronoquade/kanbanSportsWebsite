@@ -1,9 +1,69 @@
-.w3-pacifico { font-family: "Pacifico", serif; }
-h1, h2 { font-family: "Pacifico", serif; }
+/* General Reset and Typography */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+}
 
-/** Form css styles */
-/* Add form styles here or remove if not needed */
-input[type=text] {
-  margin: 10px 0;
-  box-sizing: border-box;
+.w3-pacifico, h1, h2, h3 {
+  font-family: "Pacifico", cursive, serif;
+  color: #2c3e50;
+  margin-bottom: 0.5em;
+}
+
+/* Container/Card Style */
+.container {
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Form CSS Styles */
+input[type=text], input[type=email], input[type=password], select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 20px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+  transition: border-color 0.3s ease;
+}
+
+input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Button Styling */
+button, input[type=submit] {
+  background-color: #3498db;
+  color: white;
+  padding: 12px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover, input[type=submit]:hover {
+  background-color: #2980b9;
+}
+
+/* Link Styling */
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
