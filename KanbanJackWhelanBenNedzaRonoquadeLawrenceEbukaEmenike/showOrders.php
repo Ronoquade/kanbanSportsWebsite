@@ -28,7 +28,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <header class="w3-display-container w3-center">
             <h1>Sports Apparel</h1>
             <h2>Show Results</h2>
-            <img src="SportsApparel.png" width="20%" height="22%"
+            <img src="SportsApparel.png" width="20%" height="90%"
             class="w3-display-topright">
         </header>
 
