@@ -1,9 +1,19 @@
+<?php
+    session_start();
+    include "utilFunctions.php";
+
+    # check if the user is already logged in, if yes then redirect to login page
+    if(!isset($_SESSION["loggedin"]) && ($_SESSION["loggedin"]) !== true){
+        header("location: index.php");
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Order</title>
+    <title>Sports Apparel - New Order</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico">
     <style>
@@ -106,7 +116,7 @@
             $brandString = mysqli_real_escape_string($conn, $_POST['sportsWearSel']);
             $date = date("Y-m-d");
 
-            $sql = "INSERT INTO orders (customer_id, totalPrice, date) VALUES 
+            $sql = "INSERT INTO orders (customer_id, totalPrice, date) VALUES
             ('$customer_id', '$price', '$date')";
 
             if($conn->query($sql) === TRUE) {
@@ -114,15 +124,18 @@
                     echo "<b>Order created successfully!</b><br>";
                     echo "Order Id: $order_id<br>";
                     echo "Customer Id: $customer_id<br>";
+                    echo "Created on: $date<br>";
                     echo "Total Price: $" . number_format($price,2) . "<br>";
-                    echo "<hr>";
+                    echo "<br>";
 
                     $productIdArray = explode(";", $brandString);
-                    foreach($productIdArray as $curProductId) {
+                    for($i = 0; $i < count($productIdArray); $i++) {
+                        $curProductId = $productIdArray[$i];
+
                         if(empty($curProductId))
                             continue;
 
-                        $sql = "INSERT INTO orders (order_id, product_id) VALUES
+                        $sql = "INSERT INTO productorder (order_id, product_id) VALUES
                         ('$order_id', '$curProductId')";
 
                         if($conn->query($sql) === TRUE)
